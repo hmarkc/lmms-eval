@@ -46,6 +46,7 @@ class Emu3(lmms):
 
     def __init__(
         self,
+        quantized: str = None,
         pretrained: str = "BAAI/Emu3-Chat",
         vq_pretrained: str = "BAAI/Emu3-VisionTokenizer",
         truncation: Optional[bool] = True,
@@ -72,19 +73,32 @@ class Emu3(lmms):
         else:
             self._device = torch.device(f"cuda:{accelerator.local_process_index}")
             self.device_map = f"cuda:{accelerator.local_process_index}"
-
-        # prepare model and processor
-        self._model = AutoModelForCausalLM.from_pretrained(
-            pretrained,
-            device_map=self.device_map,
-            torch_dtype=torch.float16,
-            attn_implementation="flash_attention_2",
-            trust_remote_code=True,
-        ).eval()
-
+        
+        if quantized:
+            eval_logger.info(f"Loading quantized model from {quantized}")
+            self._model = AutoModelForCausalLM.from_pretrained(
+                quantized,
+                device_map=self.device_map,
+                attn_implementation="flash_attention_2",
+                trust_remote_code=True,
+            ).eval()
+        else:
+            eval_logger.info(f"Loading model from {pretrained}")
+            # prepare model and processor
+            self._model = AutoModelForCausalLM.from_pretrained(
+                pretrained,
+                device_map=self.device_map,
+                torch_dtype=torch.float16,
+                attn_implementation="flash_attention_2",
+                trust_remote_code=True,
+            ).eval()
+        self._model._supports_quantized_cache = True
+        
         # used for Emu3-Chat
         self._tokenizer = AutoTokenizer.from_pretrained(pretrained, trust_remote_code=True, padding_side="left")
-        self.image_processor = AutoImageProcessor.from_pretrained(vq_pretrained, trust_remote_code=True, torch_dtype=torch.float16)
+        self.image_processor = AutoImageProcessor.from_pretrained(vq_pretrained, 
+                                                                  trust_remote_code=True, 
+                                                                  load_in_8bit=True)
         self.image_tokenizer = AutoModel.from_pretrained(vq_pretrained, device_map=self.device_map, trust_remote_code=True).eval()
 
         self.truncation = truncation
@@ -264,6 +278,9 @@ class Emu3(lmms):
                   pad_token_id=self.tokenizer.pad_token_id,
                   bos_token_id=self.tokenizer.bos_token_id,
                   eos_token_id=self.tokenizer.eos_token_id,
+                  # Quantize cache to 8bit
+                  cache_implementation="quantized",
+                  cache_config={"backend": "quanto", "nbits": 4}
                 )
             )
 

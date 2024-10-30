@@ -1,0 +1,112 @@
+{
+  "results": {
+    "mmvet": {
+      "alias": "mmvet",
+      "gpt_eval_score,none": 0.0,
+      "gpt_eval_score_stderr,none": "N/A"
+    }
+  },
+  "group_subtasks": {
+    "mmvet": []
+  },
+  "configs": {
+    "mmvet": {
+      "task": "mmvet",
+      "dataset_path": "lmms-lab/MMVet",
+      "dataset_kwargs": {
+        "token": true
+      },
+      "test_split": "test",
+      "full_docs": false,
+      "process_results_use_image": false,
+      "doc_to_visual": "<function mmvet_doc_to_visual at 0x7da7aab436a0>",
+      "doc_to_text": "<function doc_to_text at 0x7da7aab43d80>",
+      "doc_to_target": "{{answer}}",
+      "process_results": "<function mmvet_process_results at 0x7da7aa12c040>",
+      "description": "",
+      "target_delimiter": " ",
+      "fewshot_delimiter": "\n\n",
+      "num_fewshot": 0,
+      "metric_list": [
+        {
+          "metric": "gpt_eval_score",
+          "aggregation": "<function mmvet_aggregate_results at 0x7da7aa12c9a0>",
+          "higher_is_better": true
+        }
+      ],
+      "output_type": "generate_until",
+      "generation_kwargs": {
+        "max_new_tokens": 1024,
+        "temperature": 0.2,
+        "top_p": 1.0,
+        "num_beams": 1,
+        "do_sample": false,
+        "until": [
+          "\n\n"
+        ]
+      },
+      "repeats": 1,
+      "should_decontaminate": false,
+      "metadata": {
+        "version": 0.0,
+        "gpt_eval_model_name": "gpt-4-0613"
+      },
+      "lmms_eval_specific_kwargs": {
+        "default": {
+          "pre_prompt": "First please perform reasoning, and think step by step to provide best answer to the following question: \n\n",
+          "post_prompt": ""
+        },
+        "pre_prompt": "First please perform reasoning, and think step by step to provide best answer to the following question: \n\n",
+        "post_prompt": ""
+      }
+    }
+  },
+  "versions": {
+    "mmvet": 0.0
+  },
+  "n-shot": {
+    "mmvet": 0
+  },
+  "higher_is_better": {
+    "mmvet": {
+      "gpt_eval_score": true
+    }
+  },
+  "n-samples": {
+    "mmvet": {
+      "original": 218,
+      "effective": 218
+    }
+  },
+  "config": {
+    "model": "emu3",
+    "model_args": "pretrained=BAAI/Emu3-Chat",
+    "batch_size": "1",
+    "batch_sizes": [],
+    "device": null,
+    "use_cache": null,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "gen_kwargs": "",
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234
+  },
+  "git_hash": "aadef25",
+  "date": "20241026_044702",
+  "task_hashes": {
+    "mmvet": "dd67a4dc8a0edde2397b4bc9c66307b590f59562aea2512b06a7f60a2af9c041"
+  },
+  "model_source": "emu3",
+  "model_name": "BAAI/Emu3-Chat",
+  "model_name_sanitized": "BAAI__Emu3-Chat",
+  "system_instruction": null,
+  "system_instruction_sha": null,
+  "fewshot_as_multiturn": false,
+  "chat_template": null,
+  "chat_template_sha": null,
+  "start_time": 1165886.922720774,
+  "end_time": 1169531.052701985,
+  "total_evaluation_time_seconds": "3644.129981210921"
+}
